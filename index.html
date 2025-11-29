@@ -1,0 +1,3150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.gstatic.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com; frame-src https://js.stripe.com https://hooks.stripe.com; connect-src 'self' https://api.stripe.com https://api.ipify.org https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://www.gstatic.com;">    <meta name="description" content="Luxury kids and women's fashion retailer featuring designer clothing, accessories, and jewelry for discerning families.">
+    <meta property="og:title" content="All Seasons Sprouts - Premium Fashion">
+    <meta property="og:description" content="Discover luxury kids and women's fashion collections">
+    <meta property="og:type" content="website">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Profile System Styles */
+        .profile-btn-header {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .product-card:hover .wishlist-btn {
+            opacity: 1;
+        }
+
+        .wishlist-btn:hover {
+            background: #2d5a27;
+            color: white;
+        }
+
+        .product-image-container {
+            position: relative;
+        }
+/* Add these styles to your existing CSS */
+
+/* Sign In Specific Styles */
+.signin-benefits {
+    margin-bottom: 2rem;
+}
+
+.signin-welcome {
+    text-align: center;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.signin-welcome h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.signin-welcome p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.signin-divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+.signin-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.signin-divider span {
+    background: white;
+    padding: 0 1rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.signin-options {
+    text-align: center;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.forgot-password-btn {
+    background: none;
+    border: none;
+    color: #3d3d3d;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+}
+
+.forgot-password-btn:hover {
+    color: #636363;
+}
+
+/* Form auto-complete styling */
+.signin-form input[autocomplete] {
+    background-color: white;
+}
+
+.signin-form input[autocomplete]:focus {
+    background-color: white;
+}
+
+/* Responsive adjustments for sign in */
+@media (max-width: 640px) {
+    .signin-welcome {
+        padding: 0.75rem;
+    }
+    
+    .signin-welcome h3 {
+        font-size: 1.125rem;
+    }
+}
+        /* Profile System CSS Styles */
+
+/* Modal Base Styles */
+.profile-modal, .signup-prompt-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.profile-modal.show, .signup-prompt-modal.show {
+    display: flex;
+}
+
+.profile-modal-content, .signup-prompt-content {
+    background: white;
+    border-radius: 12px;
+    width: 50%;
+    height: max-content;
+    max-height: 100vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.profile-modal.show .profile-modal-content,
+.signup-prompt-modal.show .signup-prompt-content {
+    transform: translateY(0);
+}
+
+/* Modal Header */
+.profile-modal-header, .signup-prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-modal-header h2, .signup-prompt-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.profile-modal-close, .signup-prompt-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    color: #6b7280;
+    transition: all 0.2s ease;
+}
+
+.profile-modal-close:hover, .signup-prompt-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Modal Body */
+.profile-modal-body, .signup-prompt-body {
+    padding: 1.5rem;
+}
+
+/* Form Styles */
+.signup-form, .signin-form, .edit-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.75rem;
+  border: none; /* remove harsh border */
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.15),
+    0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+border-color: #5e5e5e;
+box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.25),   /* small sharp shadow */
+    0 8px 20px rgba(0, 0, 0, 0.2),   /* medium soft shadow */
+    0 16px 40px rgba(0, 0, 0, 0.1);  /* large subtle shadow */
+
+}
+
+.form-help {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+/* Checkbox Styles */
+.checkbox-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.checkbox-label input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+    margin: 0;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    background: #000000;
+    border-color: #000000;
+}
+
+.checkbox-label input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Button Styles */
+.signup-submit-btn, .signin-submit-btn {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: 0.5rem;
+}
+
+.signup-submit-btn:disabled,
+.signin-submit-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.profile-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+}
+
+.profile-btn-primary,.profile-btn-tertiary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.profile-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.profile-btn-secondary:hover,.profile-btn-primary:hover.profile-btn-tertiary:hover {
+    background: #e5e7eb;
+    transition: all 0.2s ease;
+
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: #3d3d3d;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.link-btn:hover {
+    color: #636363;
+}
+
+/* Profile Content */
+.profile-guest-content, .profile-registered-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+}
+
+.profile-guest-info {
+    text-align: center;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.profile-guest-icon {
+    margin-bottom: 1rem;
+    color: #6b7280;
+}
+
+.profile-guest-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.profile-guest-info p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Stats Grid */
+.profile-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.profile-stat {
+    text-align: center;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.profile-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 0.25rem;
+}
+
+.profile-stat-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Save Reminder */
+.profile-save-reminder {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+}
+
+.profile-save-icon {
+    font-size: 1.5rem;
+}
+
+.profile-save-reminder h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #92400e;
+}
+
+.profile-save-reminder p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #92400e;
+}
+
+/* Signup Benefits */
+.signup-prompt-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.signup-benefit {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.benefit-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.signup-benefit h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.signup-benefit p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.profile-no-activity {
+    color: #6b7280;
+    font-style: italic;
+    margin: 0;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Registered Profile Styles */
+.profile-header-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 250px;          /* fixed circle size */
+    height: 250px;         
+    padding: 1rem;
+
+    background: #f9fafb;
+    border-radius: 50%;    
+    text-align: center;
+    gap: 0.5rem;
+
+    /* Layered shadow for depth */
+    box-shadow: 
+        0 8px 16px rgba(0, 0, 0, 0.15),   /* main soft shadow */
+        0 4px 6px rgba(0, 0, 0, 0.10),    /* mid shadow */
+        0 1px 2px rgba(0, 0, 0, 0.08);    /* subtle surface lift */
+
+    margin: auto;          
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-header-info:hover {
+    transform: translateY(-6px); /* hover lift */
+    box-shadow: 
+        0 12px 20px rgba(0, 0, 0, 0.20),
+        0 6px 10px rgba(0, 0, 0, 0.15),
+        0 2px 4px rgba(0, 0, 0, 0.10);
+}
+
+
+
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    background: #000000;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.profile-user-info h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.profile-user-info p {
+    margin: 0 0 0.25rem 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.profile-user-info small {
+    color: #9ca3af;
+    font-size: 0.75rem;
+}
+
+/* Profile Sections */
+.profile-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.profile-section {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.profile-section h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.profile-info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-info-item:last-child {
+    border-bottom: none;
+}
+
+.profile-info-item label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.profile-info-item span {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Form Sections */
+.form-section {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-section h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Footer Styles */
+.signup-footer, .signin-footer {
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.signup-footer p, .signin-footer p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Guest Indicator */
+.guest-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #f59e0b;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .profile-modal-content, .signup-prompt-content {
+        width: 95%;
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .profile-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .profile-header-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .signup-prompt-benefits {
+        gap: 0.75rem;
+    }
+
+}
+
+/* Animation for smooth transitions */
+.profile-modal-content, .signup-prompt-content {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-logo">All Seasons Sprouts</div>
+            <div class="loading-line"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <nav class="nav-container">
+            <a href="#" class="logo">All Seasons Sprouts</a>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#collections">Collections</a></li>
+                <li><a href="#boys">Boys</a></li>
+                <li><a href="#girls">Girls</a></li>
+                <li><a href="#women">Women</a></li>
+                <li><a href="#footer">Contact</a></li>
+            </ul>
+            
+            <div class="header-actions">
+                <button class="search-btn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+
+                <!-- Profile Button -->
+                <button class="profile-btn-header" id="profileBtn" aria-label="User Profile">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+                
+                <button class="cart-btn" id="cartBtn" aria-label="Shopping Cart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z"></path>
+                        <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z"></path>
+                        <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+            </div>
+        </nav>
+    </header>
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <div class="mobile-menu-logo">All Seasons Sprouts</div>
+        <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+    
+    <nav class="mobile-menu-nav">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#collections">Collections</a></li>
+            <li><a href="#boys">Boys</a></li>
+            <li><a href="#girls">Girls</a></li>
+            <li><a href="#women">Women</a></li>
+            <li><a href="#footer">Contact</a></li>
+        </ul>
+    </nav>
+    
+    <div class="mobile-menu-footer">
+        <div class="mobile-menu-actions">
+            <button class="mobile-menu-btn primary" onclick="window.profileUI?.showProfileModal(); window.mobileMenuInstance?.close();">My Account</button>
+            <button class="mobile-menu-btn" onclick="openCart(); window.mobileMenuInstance?.close();">View Cart</button>
+        </div>
+        
+        <div class="mobile-menu-contact">
+            <p>Need help? Contact us:</p>
+            <p><a href="mailto:maezron54@gmail.com">maezron54@gmail.com</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <p class="hero-subtitle">Premium Fashion</p>
+            <h1 class="hero-title">All Seasons Sprouts</h1>
+            <p class="hero-description">Curated collections of luxury kids and women's fashion, designed for the modern family with discerning taste.</p>
+            <a href="#collections" class="hero-cta">
+                <span>Explore Collection</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Collections Section -->
+    <section class="collections-section" id="collections">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Collections</h2>
+                <p class="section-subtitle">Discover meticulously curated pieces for every season</p>
+            </div>
+            
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All</button>
+                <button class="filter-tab" data-filter="boys">Boys</button>
+                <button class="filter-tab" data-filter="girls">Girls</button>
+                <button class="filter-tab" data-filter="women">Women</button>
+                <button class="filter-tab" data-filter="accessories">Accessories</button>
+            </div>
+            
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
+<!-- Product Detail Modal Structure -->
+<div class="product-detail-modal" id="productDetailModal">
+    <div class="product-detail-content" onclick="event.stopPropagation()">
+        <div class="product-detail-header">
+            <div class="header-left">
+                <span class="product-breadcrumb" id="productBreadcrumb">Loading...</span>
+            </div>
+            
+            <!-- Centered In-Cart Indicator -->
+            <div id="inCartIndicator" class="in-cart-indicator-header" style="display: none;">
+                <div class="in-cart-info">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20,6 9,17 4,12"></polyline>
+                    </svg>
+                    <span id="inCartText">1 in cart</span>
+                </div>
+            </div>
+            
+            <button class="product-detail-close" onclick="closeProductDetail()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="product-detail-body">
+            <!-- Left Column - Image -->
+            <div class="product-image-section">
+                <div class="product-detail-image-container">
+                    <img id="productDetailImage" class="product-detail-image" src="" alt="">
+                    <div id="productDetailStockBadge" class="product-detail-stock-badge"></div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Product Info -->
+            <div class="product-info-section">
+                <h1 id="productDetailTitle" class="product-detail-title"></h1>
+                <div id="productDetailPrice" class="product-detail-price"></div>
+                <div id="productDetailSku" class="product-sku-detail"></div>
+                
+                <div class="product-section">
+                    <h3 class="product-section-title">Description</h3>
+                    <p id="productDetailDescription" class="product-description"></p>
+                </div>
+                
+                <div id="sizeSection" class="product-section" style="display: none;">
+                    <h3 class="product-section-title">Size</h3>
+                    <div id="sizeSelection" class="size-selection"></div>
+                </div>
+                
+                <div class="product-section">
+                    <h3 class="product-section-title">Quantity</h3>
+                    <div class="quantity-selector">
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="updateDetailQuantity(-1)">−</button>
+                            <div id="quantityDisplay" class="quantity-display">1</div>
+                            <button class="quantity-btn" onclick="updateDetailQuantity(1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-section">
+                    <h3 class="product-section-title">Features</h3>
+                    <ul class="features-list">
+                        <li>
+                            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20,6 9,17 4,12"></polyline>
+                            </svg>
+                            Premium quality materials
+                        </li>
+                        <li>
+                            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20,6 9,17 4,12"></polyline>
+                            </svg>
+                            Comfortable fit
+                        </li>
+                        <li>
+                            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20,6 9,17 4,12"></polyline>
+                            </svg>
+                            Easy care instructions
+                        </li>
+                        <li>
+                            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20,6 9,17 4,12"></polyline>
+                            </svg>
+                            Durable construction
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="product-section">
+                    <h3 class="product-section-title">Product Details</h3>
+                    <div class="product-details-grid">
+                        <div class="detail-row">
+                            <span class="detail-label">Material:</span>
+                            <span class="detail-value">Premium Cotton Blend</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Care:</span>
+                            <span class="detail-value">Machine wash cold</span>
+                        </div>
+                        <div id="weightRow" class="detail-row" style="display: none;">
+                            <span class="detail-label">Weight:</span>
+                            <span id="productWeight" class="detail-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="product-actions">
+            <!-- Action Buttons -->
+            <div id="actionsRow" class="actions-row">
+                <button id="addToCartBtn" class="primary-action-btn" onclick="addToCartFromDetail()">
+                    Add to Cart
+                </button>
+                <button id="wishlistBtn" class="secondary-action-btn" onclick="toggleWishlistFromDetail()">
+                    <span id="wishlistIcon">♡</span> <span id="wishlistText">Save</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3 class="cart-title">Shopping Cart</h3>
+            <button class="cart-close" id="cartClose" aria-label="Close Cart">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="cart-items" id="cartItems">
+            <div class="empty-cart">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z"></path>
+                    <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z"></path>
+                    <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6"></path>
+                </svg>
+                <h4>Your cart is empty</h4>
+                <p>Add some beautiful pieces to get started</p>
+            </div>
+        </div>
+        
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn" disabled>
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- Profile Modal Container -->
+    <div id="profileModalContainer">
+        <!-- Profile Modal content will be injected here -->
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20,6 9,17 4,12"></polyline>
+            </svg>
+            <span id="notificationText">Item added to cart</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>All Seasons Sprouts</h3>
+                    <p>Luxury kids and women's fashion retailer committed to exceptional quality, timeless style, and sustainable practices.</p>
+                    <div class="contact-info">
+                        <p>Email: <a href="mailto:maezron54@gmail.com">maezron54@gmail.com</a></p>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Collections</h3>
+                    <ul>
+                        <li><a href="#boys">Boys Clothing</a></li>
+                        <li><a href="#girls">Girls Clothing</a></li>
+                        <li><a href="#women">Women's Jewelry</a></li>
+                        <li><a href="#accessories">Accessories</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Customer Care</h3>
+                    <ul>
+                        <li><a href="#contact">Contact Us</a></li>
+                        <li><a href="#shipping">Shipping & Returns</a></li>
+                        <li><a href="#size-guide">Size Guide</a></li>
+                        <li><a href="#care">Care Instructions</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <ul>
+                        <li><a href="#instagram">Instagram</a></li>
+                        <li><a href="#newsletter">Newsletter</a></li>
+                        <li><a href="#about">Our Story</a></li>
+                        <li><a href="#sustainability">Sustainability</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 All Seasons Sprouts. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase Scripts - Load in correct order -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<!-- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script> -->
+    
+    <!-- Application Scripts - Load in correct order -->
+    <script src="firebase-config.js"></script>
+    <script>
+        // Profile Manager Classes
+        
+        // Base Profile Manager Interface
+        class BaseProfileManager {
+            constructor() {
+                this.currentProfile = null;
+            }
+
+            generateProfileId() {
+                return 'profile_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            generateSessionId() {
+                let sessionId = sessionStorage.getItem('session_id');
+                if (!sessionId) {
+                    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    sessionStorage.setItem('session_id', sessionId);
+                }
+                return sessionId;
+            }
+
+            createBaseProfile(profileId, profileType = 'guest') {
+                return {
+                    id: profileId,
+                    type: profileType,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                    session_id: this.generateSessionId(),
+                    
+                    personal_info: {
+                        email: null,
+                        name: null,
+                        phone: null,
+                        addresses: []
+                    },
+                    
+                    shopping: {
+                        cart: {
+                            items: [],
+                            total: 0,
+                            updated_at: null
+                        },
+                        wishlist: [],
+                        purchase_history: [],
+                        abandoned_carts: []
+                    },
+                    
+                    browsing: {
+                        page_views: [],
+                        product_views: [],
+                        categories_visited: [],
+                        search_queries: [],
+                        time_spent: 0,
+                        last_active: new Date().toISOString()
+                    },
+                    
+                    analytics: {
+                        events: [],
+                        filters_used: [],
+                        actions_taken: []
+                    },
+                    
+                    preferences: {
+                        currency: 'USD',
+                        notifications: true,
+                        marketing_emails: false,
+                        size_preferences: {},
+                        favorite_categories: []
+                    },
+                    
+                    metadata: {
+                        user_agent: navigator.userAgent,
+                        screen_resolution: screen.width + 'x' + screen.height,
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        language: navigator.language,
+                        referrer: document.referrer || 'direct',
+                        first_visit: new Date().toISOString(),
+                        visit_count: 1
+                    }
+                };
+            }
+        }
+
+        // Replace the FirebaseProfileManager class in your HTML file with this version:
+
+class FirebaseProfileManager extends BaseProfileManager {
+    constructor(db, auth) {
+        super();
+        this.db = db;
+        this.auth = auth;
+        this.profilesCollection = 'user_profiles';
+        this.batchUpdateScheduled = false;
+    }
+
+    async initializeProfile() {
+        try {
+            const user = this.auth.currentUser;
+            
+            if (user) {
+                this.currentProfile = await this.loadRegisteredProfile(user);
+            } else {
+                this.currentProfile = await this.loadGuestProfile();
+            }
+            
+            return this.currentProfile;
+        } catch (error) {
+            console.error('Failed to initialize profile:', error);
+            this.currentProfile = this.createFallbackProfile();
+            return this.currentProfile;
+        }
+    }
+
+    async loadGuestProfile() {
+        try {
+            const sessionId = this.generateSessionId();
+            const guestProfileKey = 'guest_profile_' + sessionId;
+            
+            const localProfile = localStorage.getItem(guestProfileKey);
+            if (localProfile) {
+                const profile = JSON.parse(localProfile);
+                
+                try {
+                    await this.syncGuestProfileToFirebase(profile);
+                } catch (error) {
+                    console.warn('Failed to sync guest profile to Firebase:', error);
+                }
+                
+                return profile;
+            }
+            
+            const profileId = 'guest_' + sessionId;
+            const profile = this.createBaseProfile(profileId, 'guest');
+            
+            localStorage.setItem(guestProfileKey, JSON.stringify(profile));
+            
+            try {
+                await this.db.collection(this.profilesCollection).doc(profileId).set(profile);
+            } catch (error) {
+                console.warn('Failed to save guest profile to Firebase:', error);
+            }
+            
+            return profile;
+        } catch (error) {
+            console.error('Failed to load guest profile:', error);
+            return this.createFallbackProfile();
+        }
+    }
+
+    // CRITICAL: Add the missing convertGuestToRegistered method
+    async convertGuestToRegistered(userInfo, password) {
+        if (!this.currentProfile || this.currentProfile.type !== 'guest') {
+            throw new Error('No guest profile to convert or profile is already registered');
+        }
+
+        try {
+            console.log('Starting guest to registered conversion...');
+            
+            // Store current guest profile data before conversion
+            const guestProfile = { ...this.currentProfile };
+            const oldGuestId = guestProfile.id;
+            const sessionId = this.generateSessionId();
+            const guestProfileKey = 'guest_profile_' + sessionId;
+
+            // Step 1: Create Firebase auth user
+            const userCredential = await this.auth.createUserWithEmailAndPassword(userInfo.email, password);
+            const user = userCredential.user;
+            console.log('Firebase auth user created:', user.uid);
+
+            // Step 2: Update user display name
+            if (userInfo.name) {
+                await user.updateProfile({ displayName: userInfo.name });
+            }
+
+            // Step 3: Create new registered profile with Firebase UID
+            const registeredProfile = {
+                ...guestProfile, // Copy ALL existing guest data
+                id: user.uid, // CRITICAL: Change ID to Firebase Auth UID
+                type: 'registered', // CRITICAL: Change type to registered
+                updated_at: new Date().toISOString(),
+                personal_info: {
+                    ...guestProfile.personal_info,
+                    email: userInfo.email,
+                    name: userInfo.name,
+                    phone: userInfo.phone || null
+                },
+                preferences: {
+                    ...guestProfile.preferences,
+                    marketing_emails: userInfo.marketing_emails || false
+                },
+                converted_from_guest: {
+                    original_guest_id: oldGuestId,
+                    converted_at: new Date().toISOString(),
+                    guest_session_id: sessionId
+                }
+            };
+
+            // Step 4: Save new registered profile to Firebase with user UID as document ID
+            await this.db.collection(this.profilesCollection).doc(user.uid).set(registeredProfile);
+            console.log('New registered profile saved with ID:', user.uid);
+
+            // Step 5: Delete old guest profile document
+            try {
+                await this.db.collection(this.profilesCollection).doc(oldGuestId).delete();
+                console.log('Old guest profile deleted:', oldGuestId);
+            } catch (error) {
+                console.warn('Failed to delete old guest profile:', error);
+            }
+
+            // Step 6: Clean up local storage
+            localStorage.removeItem(guestProfileKey);
+            console.log('Local storage cleaned up');
+
+            // Step 7: Update current profile reference
+            this.currentProfile = registeredProfile;
+
+            // Step 8: Log conversion event with correct data
+            await this.trackAction('guest_converted_to_registered', {
+                original_guest_id: oldGuestId,
+                new_user_id: user.uid,
+                new_profile_type: 'registered', // This should now be 'registered'
+                cart_items: registeredProfile.shopping.cart.items.length,
+                cart_value: registeredProfile.shopping.cart.total,
+                conversion_success: true
+            });
+
+            console.log('Guest to registered conversion completed successfully');
+            return registeredProfile;
+
+        } catch (error) {
+            console.error('Failed to convert guest to registered:', error);
+            
+            // Log conversion failure
+            if (this.currentProfile) {
+                await this.trackAction('guest_conversion_failed', {
+                    guest_id: this.currentProfile.id,
+                    error_message: error.message,
+                    error_code: error.code
+                });
+            }
+            
+            throw error;
+        }
+    }
+
+    async loadRegisteredProfile(user) {
+        try {
+            const profileDoc = await this.db.collection(this.profilesCollection).doc(user.uid).get();
+            
+            if (profileDoc.exists) {
+                const profile = profileDoc.data();
+                
+                // Ensure profile type is set correctly
+                if (profile.type !== 'registered') {
+                    profile.type = 'registered';
+                    await this.db.collection(this.profilesCollection).doc(user.uid).update({
+                        type: 'registered',
+                        updated_at: new Date().toISOString()
+                    });
+                }
+                
+                await this.updateLastActive(user.uid);
+                return profile;
+            } else {
+                return await this.createRegisteredProfile(user);
+            }
+        } catch (error) {
+            console.error('Failed to load registered profile:', error);
+            throw error;
+        }
+    }
+
+    async createRegisteredProfile(user) {
+        try {
+            const profileId = user.uid;
+            const profile = this.createBaseProfile(profileId, 'registered');
+            
+            profile.personal_info.email = user.email;
+            profile.personal_info.name = user.displayName;
+            
+            await this.db.collection(this.profilesCollection).doc(profileId).set(profile);
+            
+            console.log('Created new registered profile:', profileId);
+            return profile;
+        } catch (error) {
+            console.error('Failed to create registered profile:', error);
+            throw error;
+        }
+    }
+
+    async handleAuthChange(user) {
+        console.log('Auth change detected:', user ? 'User logged in: ' + user.uid : 'User logged out');
+        
+        if (user && this.currentProfile?.type === 'guest') {
+            // User just logged in, load their registered profile
+            this.currentProfile = await this.loadRegisteredProfile(user);
+            console.log('Loaded registered profile after auth change');
+        } else if (!user && this.currentProfile?.type === 'registered') {
+            // User logged out, create new guest profile
+            this.currentProfile = await this.loadGuestProfile();
+            console.log('Created new guest profile after sign out');
+        } else if (user) {
+            // User was already logged in, just load their profile
+            this.currentProfile = await this.loadRegisteredProfile(user);
+        }
+    }
+
+    async syncGuestProfileToFirebase(profile) {
+        if (!this.db) return;
+        
+        try {
+            await this.db.collection(this.profilesCollection).doc(profile.id).set(profile, { merge: true });
+        } catch (error) {
+            console.warn('Failed to sync guest profile to Firebase:', error);
+        }
+    }
+
+    async getCurrentProfile() {
+        return this.currentProfile;
+    }
+
+    async updateProfile(updates) {
+        if (!this.currentProfile) return null;
+        
+        try {
+            Object.assign(this.currentProfile.personal_info, updates.personal_info || {});
+            Object.assign(this.currentProfile.preferences, updates.preferences || {});
+            this.currentProfile.updated_at = new Date().toISOString();
+            
+            if (this.db) {
+                await this.db.collection(this.profilesCollection).doc(this.currentProfile.id).update({
+                    personal_info: this.currentProfile.personal_info,
+                    preferences: this.currentProfile.preferences,
+                    updated_at: this.currentProfile.updated_at
+                });
+            }
+            
+            if (this.currentProfile.type === 'guest') {
+                const sessionId = this.generateSessionId();
+                const guestProfileKey = 'guest_profile_' + sessionId;
+                localStorage.setItem(guestProfileKey, JSON.stringify(this.currentProfile));
+            }
+            
+            return this.currentProfile;
+        } catch (error) {
+            console.error('Failed to update profile:', error);
+            throw error;
+        }
+    }
+
+    async trackAction(action, data = {}) {
+        if (!this.currentProfile) return;
+        
+        try {
+            const event = {
+                action,
+                data,
+                timestamp: new Date().toISOString(),
+                page_url: window.location.href,
+                user_agent: navigator.userAgent
+            };
+            
+            this.currentProfile.analytics.events.push(event);
+            this.currentProfile.browsing.last_active = new Date().toISOString();
+            this.currentProfile.updated_at = new Date().toISOString();
+            
+            if (this.currentProfile.analytics.events.length > 1000) {
+                this.currentProfile.analytics.events = this.currentProfile.analytics.events.slice(-1000);
+            }
+            
+            await this.batchUpdateProfile();
+            
+        } catch (error) {
+            console.error('Failed to track action:', error);
+        }
+    }
+
+    async addToCart(productId, quantity = 1) {
+        if (!this.currentProfile) return;
+        
+        const existingItem = this.currentProfile.shopping.cart.items.find(item => item.product_id === productId);
+        
+        if (existingItem) {
+            existingItem.quantity += quantity;
+            existingItem.updated_at = new Date().toISOString();
+        } else {
+            this.currentProfile.shopping.cart.items.push({
+                product_id: productId,
+                quantity,
+                added_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            });
+        }
+        
+        await this.updateCartTotal();
+        await this.batchUpdateProfile();
+    }
+
+    async removeFromCart(productId) {
+        if (!this.currentProfile) return;
+        
+        this.currentProfile.shopping.cart.items = this.currentProfile.shopping.cart.items.filter(
+            item => item.product_id !== productId
+        );
+        
+        await this.updateCartTotal();
+        await this.batchUpdateProfile();
+    }
+
+    async updateCartQuantity(productId, quantity) {
+        if (!this.currentProfile) return;
+        
+        const item = this.currentProfile.shopping.cart.items.find(item => item.product_id === productId);
+        if (item) {
+            if (quantity <= 0) {
+                await this.removeFromCart(productId);
+            } else {
+                item.quantity = quantity;
+                item.updated_at = new Date().toISOString();
+                await this.updateCartTotal();
+                await this.batchUpdateProfile();
+            }
+        }
+    }
+
+    async clearCart() {
+        if (!this.currentProfile) return;
+        
+        if (this.currentProfile.shopping.cart.items.length > 0) {
+            this.currentProfile.shopping.abandoned_carts.push({
+                ...this.currentProfile.shopping.cart,
+                abandoned_at: new Date().toISOString()
+            });
+            
+            if (this.currentProfile.shopping.abandoned_carts.length > 10) {
+                this.currentProfile.shopping.abandoned_carts = this.currentProfile.shopping.abandoned_carts.slice(-10);
+            }
+        }
+        
+        this.currentProfile.shopping.cart = {
+            items: [],
+            total: 0,
+            updated_at: new Date().toISOString()
+        };
+        
+        await this.batchUpdateProfile();
+    }
+
+    async addToWishlist(productId, productData = {}) {
+        if (!this.currentProfile) return;
+        
+        const existingItem = this.currentProfile.shopping.wishlist.find(item => item.product_id === productId);
+        if (!existingItem) {
+            this.currentProfile.shopping.wishlist.push({
+                product_id: productId,
+                product_data: productData,
+                added_at: new Date().toISOString()
+            });
+            
+            await this.batchUpdateProfile();
+        }
+    }
+
+    async removeFromWishlist(productId) {
+        if (!this.currentProfile) return;
+        
+        this.currentProfile.shopping.wishlist = this.currentProfile.shopping.wishlist.filter(
+            item => item.product_id !== productId
+        );
+        
+        await this.batchUpdateProfile();
+    }
+
+    async addPurchase(orderData) {
+        if (!this.currentProfile) return;
+        
+        const purchase = {
+            ...orderData,
+            purchased_at: new Date().toISOString()
+        };
+        
+        this.currentProfile.shopping.purchase_history.push(purchase);
+        await this.clearCart();
+        await this.batchUpdateProfile();
+    }
+
+    async trackPageView(pageName, data = {}) {
+        if (!this.currentProfile) return;
+        
+        const pageView = {
+            page: pageName,
+            data,
+            timestamp: new Date().toISOString(),
+            url: window.location.href
+        };
+        
+        this.currentProfile.browsing.page_views.push(pageView);
+        this.currentProfile.browsing.last_active = new Date().toISOString();
+        
+        if (this.currentProfile.browsing.page_views.length > 500) {
+            this.currentProfile.browsing.page_views = this.currentProfile.browsing.page_views.slice(-500);
+        }
+        
+        await this.batchUpdateProfile();
+    }
+
+    async trackProductView(productId, productData = {}) {
+        if (!this.currentProfile) return;
+        
+        const productView = {
+            product_id: productId,
+            product_data: productData,
+            timestamp: new Date().toISOString()
+        };
+        
+        this.currentProfile.browsing.product_views.push(productView);
+        
+        if (this.currentProfile.browsing.product_views.length > 100) {
+            this.currentProfile.browsing.product_views = this.currentProfile.browsing.product_views.slice(-100);
+        }
+        
+        await this.batchUpdateProfile();
+    }
+
+    async updateCartTotal() {
+        if (!this.currentProfile || typeof products === 'undefined') return;
+        
+        let total = 0;
+        this.currentProfile.shopping.cart.items.forEach(item => {
+            const product = products.find(p => p.id === item.product_id);
+            if (product) {
+                total += product.price * item.quantity;
+            }
+        });
+        
+        this.currentProfile.shopping.cart.total = total;
+        this.currentProfile.shopping.cart.updated_at = new Date().toISOString();
+    }
+
+    async updateLastActive(profileId) {
+        if (!this.db) return;
+        
+        try {
+            await this.db.collection(this.profilesCollection).doc(profileId).update({
+                'browsing.last_active': new Date().toISOString(),
+                'metadata.visit_count': firebase.firestore.FieldValue.increment(1)
+            });
+        } catch (error) {
+            console.warn('Failed to update last active:', error);
+        }
+    }
+
+    async batchUpdateProfile() {
+        if (this.batchUpdateScheduled) return;
+        
+        this.batchUpdateScheduled = true;
+        
+        setTimeout(async () => {
+            try {
+                if (this.db && this.currentProfile) {
+                    await this.db.collection(this.profilesCollection).doc(this.currentProfile.id).set(this.currentProfile, { merge: true });
+                }
+                
+                if (this.currentProfile?.type === 'guest') {
+                    const sessionId = this.generateSessionId();
+                    const guestProfileKey = 'guest_profile_' + sessionId;
+                    localStorage.setItem(guestProfileKey, JSON.stringify(this.currentProfile));
+                }
+            } catch (error) {
+                console.warn('Failed to batch update profile:', error);
+            } finally {
+                this.batchUpdateScheduled = false;
+            }
+        }, 2000);
+    }
+
+    createFallbackProfile() {
+        const profileId = 'fallback_' + Date.now();
+        return this.createBaseProfile(profileId, 'guest');
+    }
+}
+
+        // Offline Profile Manager
+        class OfflineProfileManager extends BaseProfileManager {
+            constructor() {
+                super();
+                this.storageKey = 'offline_profile';
+            }
+
+            async initializeProfile() {
+                try {
+                    const storedProfile = localStorage.getItem(this.storageKey);
+                    
+                    if (storedProfile) {
+                        this.currentProfile = JSON.parse(storedProfile);
+                        this.currentProfile.metadata.visit_count += 1;
+                        this.currentProfile.browsing.last_active = new Date().toISOString();
+                        this.currentProfile.updated_at = new Date().toISOString();
+                        await this.saveProfile();
+                    } else {
+                        const profileId = this.generateProfileId();
+                        this.currentProfile = this.createBaseProfile(profileId, 'guest');
+                        await this.saveProfile();
+                    }
+                    
+                    return this.currentProfile;
+                } catch (error) {
+                    console.error('Failed to initialize offline profile:', error);
+                    const profileId = this.generateProfileId();
+                    this.currentProfile = this.createBaseProfile(profileId, 'guest');
+                    return this.currentProfile;
+                }
+            }
+
+            async getCurrentProfile() {
+                return this.currentProfile;
+            }
+
+            async updateProfile(updates) {
+                if (!this.currentProfile) return null;
+                
+                Object.assign(this.currentProfile.personal_info, updates.personal_info || {});
+                Object.assign(this.currentProfile.preferences, updates.preferences || {});
+                this.currentProfile.updated_at = new Date().toISOString();
+                
+                await this.saveProfile();
+                return this.currentProfile;
+            }
+
+            async trackAction(action, data = {}) {
+                if (!this.currentProfile) return;
+                
+                const event = {
+                    action,
+                    data,
+                    timestamp: new Date().toISOString(),
+                    page_url: window.location.href,
+                    user_agent: navigator.userAgent
+                };
+                
+                this.currentProfile.analytics.events.push(event);
+                this.currentProfile.browsing.last_active = new Date().toISOString();
+                this.currentProfile.updated_at = new Date().toISOString();
+                
+                if (this.currentProfile.analytics.events.length > 1000) {
+                    this.currentProfile.analytics.events = this.currentProfile.analytics.events.slice(-1000);
+                }
+                
+                await this.saveProfile();
+            }
+
+            async addToCart(productId, quantity = 1) {
+                if (!this.currentProfile) return;
+                
+                const existingItem = this.currentProfile.shopping.cart.items.find(item => item.product_id === productId);
+                
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                    existingItem.updated_at = new Date().toISOString();
+                } else {
+                    this.currentProfile.shopping.cart.items.push({
+                        product_id: productId,
+                        quantity,
+                        added_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    });
+                }
+                
+                await this.updateCartTotal();
+                await this.saveProfile();
+            }
+
+            async removeFromCart(productId) {
+                if (!this.currentProfile) return;
+                this.currentProfile.shopping.cart.items = this.currentProfile.shopping.cart.items.filter(item => item.product_id !== productId);
+                await this.updateCartTotal();
+                await this.saveProfile();
+            }
+
+            async updateCartQuantity(productId, quantity) {
+                if (!this.currentProfile) return;
+                const item = this.currentProfile.shopping.cart.items.find(item => item.product_id === productId);
+                if (item) {
+                    if (quantity <= 0) {
+                        await this.removeFromCart(productId);
+                    } else {
+                        item.quantity = quantity;
+                        item.updated_at = new Date().toISOString();
+                        await this.updateCartTotal();
+                        await this.saveProfile();
+                    }
+                }
+            }
+
+            async clearCart() {
+                if (!this.currentProfile) return;
+                if (this.currentProfile.shopping.cart.items.length > 0) {
+                    this.currentProfile.shopping.abandoned_carts.push({
+                        ...this.currentProfile.shopping.cart,
+                        abandoned_at: new Date().toISOString()
+                    });
+                    if (this.currentProfile.shopping.abandoned_carts.length > 10) {
+                        this.currentProfile.shopping.abandoned_carts = this.currentProfile.shopping.abandoned_carts.slice(-10);
+                    }
+                }
+                this.currentProfile.shopping.cart = { items: [], total: 0, updated_at: new Date().toISOString() };
+                await this.saveProfile();
+            }
+
+            async addToWishlist(productId, productData = {}) {
+                if (!this.currentProfile) return;
+                const existingItem = this.currentProfile.shopping.wishlist.find(item => item.product_id === productId);
+                if (!existingItem) {
+                    this.currentProfile.shopping.wishlist.push({
+                        product_id: productId,
+                        product_data: productData,
+                        added_at: new Date().toISOString()
+                    });
+                    await this.saveProfile();
+                }
+            }
+
+            async removeFromWishlist(productId) {
+                if (!this.currentProfile) return;
+                this.currentProfile.shopping.wishlist = this.currentProfile.shopping.wishlist.filter(item => item.product_id !== productId);
+                await this.saveProfile();
+            }
+
+            async addPurchase(orderData) {
+                if (!this.currentProfile) return;
+                const purchase = { ...orderData, purchased_at: new Date().toISOString() };
+                this.currentProfile.shopping.purchase_history.push(purchase);
+                await this.clearCart();
+                await this.saveProfile();
+            }
+
+            async trackPageView(pageName, data = {}) {
+                if (!this.currentProfile) return;
+                const pageView = { page: pageName, data, timestamp: new Date().toISOString(), url: window.location.href };
+                this.currentProfile.browsing.page_views.push(pageView);
+                this.currentProfile.browsing.last_active = new Date().toISOString();
+                if (this.currentProfile.browsing.page_views.length > 500) {
+                    this.currentProfile.browsing.page_views = this.currentProfile.browsing.page_views.slice(-500);
+                }
+                await this.saveProfile();
+            }
+
+            async trackProductView(productId, productData = {}) {
+                if (!this.currentProfile) return;
+                const productView = { product_id: productId, product_data: productData, timestamp: new Date().toISOString() };
+                this.currentProfile.browsing.product_views.push(productView);
+                if (this.currentProfile.browsing.product_views.length > 100) {
+                    this.currentProfile.browsing.product_views = this.currentProfile.browsing.product_views.slice(-100);
+                }
+                await this.saveProfile();
+            }
+
+            async updateCartTotal() {
+                if (!this.currentProfile || typeof products === 'undefined') return;
+                let total = 0;
+                this.currentProfile.shopping.cart.items.forEach(item => {
+                    const product = products.find(p => p.id === item.product_id);
+                    if (product) total += product.price * item.quantity;
+                });
+                this.currentProfile.shopping.cart.total = total;
+                this.currentProfile.shopping.cart.updated_at = new Date().toISOString();
+            }
+
+            async saveProfile() {
+                try {
+                    localStorage.setItem(this.storageKey, JSON.stringify(this.currentProfile));
+                } catch (error) {
+                    console.error('Failed to save profile to localStorage:', error);
+                }
+            }
+
+            async handleAuthChange(user) {
+                console.log('Auth change detected in offline mode - profile will remain local');
+            }
+        }
+
+        // ===== ENHANCED PROFILE UI COMPONENT =====
+
+class ProfileUI {
+    constructor() {
+        this.firebaseManager = null;
+        this.currentProfile = null;
+        this.modalContainer = null;
+        this.isInitialized = false;
+    }
+
+    initialize(firebaseManager) {
+    this.firebaseManager = firebaseManager;
+    this.setupModalContainer();
+    this.setupEventListeners();
+    this.loadProfile();
+    this.isInitialized = true;
+    
+    const enhancedSignInStyles = `
+
+.profile-btn-header.guest-with-cart {
+    position: relative;
+}
+
+.profile-btn-header.guest-with-cart:hover {
+    background: rgba(0, 0, 0, 0.08); /* subtle dark hover */
+}
+
+/* Animation for smooth transitions */
+.profile-btn-header {
+    transition: all 0.3s ease;
+}
+`;
+
+
+    if (!document.getElementById('signin-ui-styles')) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'signin-ui-styles';
+        styleSheet.textContent = enhancedSignInStyles; // Changed from signedInStyles to enhancedSignInStyles
+        document.head.appendChild(styleSheet);
+    }
+    
+    console.log('ProfileUI initialized');
+}
+
+    setupModalContainer() {
+        // Create modal container if it doesn't exist
+        this.modalContainer = document.getElementById('profileModalContainer');
+        if (!this.modalContainer) {
+            this.modalContainer = document.createElement('div');
+            this.modalContainer.id = 'profileModalContainer';
+            document.body.appendChild(this.modalContainer);
+        }
+    }
+
+    setupEventListeners() {
+        const profileBtn = document.getElementById('profileBtn');
+        if (profileBtn) {
+            profileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showProfileModal();
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeAllModals();
+            }
+        });
+    }
+
+    async loadProfile() {
+    if (!this.firebaseManager) return;
+    
+    try {
+        // Force refresh from Firebase/profile manager
+        if (this.firebaseManager.profileManager) {
+            this.currentProfile = await this.firebaseManager.profileManager.getCurrentProfile();
+        } else {
+            this.currentProfile = await this.firebaseManager.getCurrentProfile();
+        }
+        
+        console.log('Profile loaded:', this.currentProfile?.type, this.currentProfile?.id);
+        
+        // Update UI elements that depend on profile
+        this.updateProfileButton();
+        
+    } catch (error) {
+        console.error('Failed to load profile:', error);
+    }
+}
+
+    updateProfileButton() {
+    const profileBtn = document.getElementById('profileBtn');
+    if (!profileBtn || !this.currentProfile) return;
+
+    const isGuest = this.currentProfile.type === 'guest';
+    const isSignedIn = this.currentProfile.type === 'registered';
+    const cartItems = this.currentProfile.shopping?.cart?.items?.length || 0;
+    
+    // Clear previous state classes
+    profileBtn.classList.remove('signed-in', 'guest-with-cart');
+    
+    if (isSignedIn) {
+        // Remove guest indicator if it exists
+        const indicator = profileBtn.querySelector('.guest-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+        
+        // Add signed-in styling
+        profileBtn.classList.add('signed-in');
+        const userName = this.currentProfile.personal_info?.name || 'User';
+        profileBtn.title = `Signed in as ${userName}`;
+        
+        console.log('Profile button updated for signed-in user:', userName);
+        
+    } else if (isGuest && cartItems > 0) {
+        // Add visual indicator for guest users with items
+        profileBtn.classList.add('guest-with-cart');
+        profileBtn.style.position = 'relative';
+        
+        let indicator = profileBtn.querySelector('.guest-indicator');
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.className = 'guest-indicator';
+            indicator.style.cssText = `
+                position: absolute;
+                top: -2px;
+                right: -2px;
+                width: 8px;
+                height: 8px;
+                background: #f59e0b;
+                border-radius: 50%;
+                border: 2px solid white;
+            `;
+            profileBtn.appendChild(indicator);
+        }
+        profileBtn.title = 'Guest user - Sign in to save cart';
+        
+    } else {
+        // Clean guest state
+        const indicator = profileBtn.querySelector('.guest-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+        profileBtn.title = 'User Profile';
+    }
+}
+
+    showProfileModal() {
+        if (!this.currentProfile) {
+            alert('Profile not loaded yet. Please try again.');
+            return;
+        }
+
+        const modal = this.createProfileModal();
+        this.modalContainer.innerHTML = '';
+        this.modalContainer.appendChild(modal);
+        
+        // Show modal with animation
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 10);
+
+        // Track modal view
+        if (this.firebaseManager) {
+            this.firebaseManager.logEvent('profile_modal_opened', {
+                profile_type: this.currentProfile.type
+            });
+        }
+    }
+
+    createProfileModal() {
+        const modal = document.createElement('div');
+        modal.className = 'profile-modal';
+        modal.id = 'profileModal';
+        
+        const stats = this.calculateStats();
+        const isGuest = this.currentProfile.type === 'guest';
+        
+        modal.innerHTML = `
+            <div class="profile-modal-content" onclick="event.stopPropagation()">
+                <div class="profile-modal-header">
+                    <h2>${isGuest ? 'Guest Profile' : 'My Profile'}</h2>
+                    <button class="profile-modal-close" onclick="window.profileUI.closeProfileModal()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="profile-modal-body">
+                    ${isGuest ? this.createGuestProfileContent(stats) : this.createRegisteredProfileContent(stats)}
+                </div>
+                
+                <div class="profile-modal-footer">
+                    ${this.createProfileActions()}
+                </div>
+            </div>
+        `;
+
+        // Add click outside to close
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeProfileModal();
+            }
+        });
+
+        return modal;
+    }
+
+    createGuestProfileContent(stats) {
+        return `
+            <div class="profile-guest-content">
+                <div class="profile-guest-info">
+                    <div class="profile-guest-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h3>Browse as Guest</h3>
+                    <p>You're shopping as a guest. Create an account to save your cart and track orders.</p>
+                </div>
+                
+                <div class="profile-stats-grid">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${stats.cartItems}</div>
+                        <div class="profile-stat-label">Cart Items</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${stats.wishlistItems}</div>
+                        <div class="profile-stat-label">Wishlist</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">$${stats.cartTotal.toFixed(2)}</div>
+                        <div class="profile-stat-label">Cart Value</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${this.currentProfile.metadata.visit_count}</div>
+                        <div class="profile-stat-label">Visits</div>
+                    </div>
+                </div>
+                
+                ${stats.cartItems > 0 ? `
+                    <div class="profile-save-reminder">
+                        <div class="profile-save-icon">💾</div>
+                        <div>
+                            <h4>Don't lose your cart!</h4>
+                            <p>Create an account to save ${stats.cartItems} item${stats.cartItems !== 1 ? 's' : ''} worth $${stats.cartTotal.toFixed(2)}</p>
+                        </div>
+                    </div>
+                ` : ''}      
+        `;
+    }
+
+    createRegisteredProfileContent(stats) {
+        const profile = this.currentProfile;
+        const personalInfo = profile.personal_info || {};
+        
+        return `
+            <div class="profile-registered-content">
+                <div class="profile-header-info">
+                    <div class="profile-avatar">
+                        ${personalInfo.name ? personalInfo.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <div class="profile-user-info">
+                        <h3>${personalInfo.name || 'User'}</h3>
+                        <p>${personalInfo.email || 'No email set'}</p>
+                        <small>Member since ${new Date(profile.created_at).toLocaleDateString()}</small>
+                    </div>
+                </div>
+                
+                <div class="profile-stats-grid">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${stats.totalOrders}</div>
+                        <div class="profile-stat-label">Orders</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">$${stats.totalSpent.toFixed(2)}</div>
+                        <div class="profile-stat-label">Total Spent</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${stats.cartItems}</div>
+                        <div class="profile-stat-label">Cart Items</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${stats.wishlistItems}</div>
+                        <div class="profile-stat-label">Wishlist</div>
+                    </div>
+                </div>
+                
+                <div class="profile-sections">
+                    <div class="profile-section">
+                        <h4>Personal Information</h4>
+                        <div class="profile-info-item">
+                            <label>Name:</label>
+                            <span>${personalInfo.name || 'Not set'}</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <label>Email:</label>
+                            <span>${personalInfo.email || 'Not set'}</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <label>Phone:</label>
+                            <span>${personalInfo.phone || 'Not set'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h4>Shopping Summary</h4>
+                        <div class="profile-info-item">
+                            <label>Last Order:</label>
+                            <span>${this.getLastOrderDate()}</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <label>Favorite Category:</label>
+                            <span>${this.getFavoriteCategory()}</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <label>Cart Value:</label>
+                            <span>$${stats.cartTotal.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        `;
+    }
+
+    createActivityList() {
+        const events = this.currentProfile.analytics?.events || [];
+        const recentEvents = events.slice(-5).reverse();
+        
+        if (recentEvents.length === 0) {
+            return '<p class="profile-no-activity">No recent activity</p>';
+        }
+    }
+
+    createProfileActions() {
+        const isGuest = this.currentProfile.type === 'guest';
+        
+        if (isGuest) {
+            return `
+                <div class="profile-actions">
+                    <button class="profile-btn profile-btn-primary" onclick="window.profileUI.showSignupPrompt()">
+                        Create Account
+                    </button>
+                    <button class="profile-btn profile-btn-secondary" onclick="window.profileUI.showSignInForm()">
+                        Sign In
+                    </button>
+                    <button class="profile-btn profile-btn-tertiary" onclick="window.profileUI.exportGuestData()">
+                        Export Data
+                    </button>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="profile-actions">
+                    <button class="profile-btn profile-btn-primary" onclick="window.profileUI.showEditProfile()">
+                        Edit Profile
+                    </button>
+                    <button class="profile-btn profile-btn-secondary" onclick="window.profileUI.showOrderHistory()">
+                        Order History
+                    </button>
+                    <button class="profile-btn profile-btn-tertiary" onclick="window.profileUI.signOut()">
+                        Sign Out
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    showSignupPrompt() {
+        const modal = this.createSignupPromptModal();
+        this.modalContainer.appendChild(modal);
+        
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 10);
+
+        if (this.firebaseManager) {
+            this.firebaseManager.logEvent('signup_prompt_shown', {
+                cart_items: this.currentProfile.shopping?.cart?.items?.length || 0,
+                cart_value: this.currentProfile.shopping?.cart?.total || 0
+            });
+        }
+    }
+
+    createSignupPromptModal() {
+    const modal = document.createElement('div');
+    modal.className = 'signup-prompt-modal';
+    modal.id = 'signupPromptModal';
+    
+    const stats = this.calculateStats();
+    
+    modal.innerHTML = `
+        <div class="signup-prompt-content" onclick="event.stopPropagation()">
+            <div class="signup-prompt-header">
+                <h2>Save Your Shopping Progress</h2>
+                <button class="signup-prompt-close" onclick="window.profileUI.closeSignupPrompt()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="signup-prompt-body">
+                <div class="signup-prompt-benefits">
+                    <div class="signup-benefit">
+                        <div class="benefit-icon">🛒</div>
+                        <div>
+                            <h4>Save Your Cart</h4>
+                            <p>Keep ${stats.cartItems} item${stats.cartItems !== 1 ? 's' : ''} ($${stats.cartTotal.toFixed(2)}) safe</p>
+                        </div>
+                    </div>
+                    <div class="signup-benefit">
+                        <div class="benefit-icon">📦</div>
+                        <div>
+                            <h4>Track Orders</h4>
+                            <p>Get updates on your purchases and delivery</p>
+                        </div>
+                    </div>
+                    <div class="signup-benefit">
+                        <div class="benefit-icon">❤️</div>
+                        <div>
+                            <h4>Wishlist & Favorites</h4>
+                            <p>Save items for later and get restock alerts</p>
+                        </div>
+                    </div>
+                    <div class="signup-benefit">
+                        <div class="benefit-icon">🎯</div>
+                        <div>
+                            <h4>Personal Recommendations</h4>
+                            <p>Get suggestions based on your browsing</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="signup-form" onsubmit="window.profileUI.handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email Address</label>
+                        <input type="email" id="signupEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" name="password" minlength="6" required>
+                        <small class="form-help">Minimum 6 characters</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupConfirmPassword">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" name="confirmPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPhone">Phone (Optional)</label>
+                        <input type="tel" id="signupPhone" name="phone">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="signupMarketing" name="marketing">
+                            Send me style updates and exclusive offers
+                        </label>
+                    </div>
+                    <button type="submit" class="signup-submit-btn">Create Free Account</button>
+                </form>
+                
+                <div class="signup-footer">
+                    <p>Already have an account? <button type="button" class="link-btn" onclick="window.profileUI.showSignInForm()">Sign In</button></p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Add click outside to close
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            this.closeSignupPrompt();
+        }
+    });
+
+    return modal;
+}
+
+    async handleSignup(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
+    
+    // Validate passwords match
+    if (password !== confirmPassword) {
+        this.showErrorMessage('Passwords do not match');
+        return;
+    }
+    
+    // Validate password strength
+    if (password.length < 6) {
+        this.showErrorMessage('Password must be at least 6 characters long');
+        return;
+    }
+    
+    const userData = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || null,
+        marketing_emails: formData.get('marketing') === 'on'
+    };
+
+    try {
+        const submitBtn = event.target.querySelector('.signup-submit-btn');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Creating Account...';
+        submitBtn.disabled = true;
+
+        console.log('ProfileUI: Starting signup process...');
+        console.log('ProfileUI: Current profile before signup:', this.currentProfile?.type);
+        console.log('ProfileUI: Current profile ID:', this.currentProfile?.id);
+
+        // CRITICAL: Use the convertGuestToRegistered method directly
+        if (this.firebaseManager.profileManager && 
+            typeof this.firebaseManager.profileManager.convertGuestToRegistered === 'function') {
+            
+            console.log('ProfileUI: Using convertGuestToRegistered method');
+            await this.firebaseManager.profileManager.convertGuestToRegistered(userData, password);
+            
+        } else {
+            console.error('ProfileUI: convertGuestToRegistered method not found!');
+            throw new Error('Profile conversion method not available');
+        }
+
+        console.log('ProfileUI: Signup completed successfully');
+
+        // Log conversion event
+        await this.firebaseManager.logEvent('guest_converted_to_user', {
+            cart_items: this.currentProfile?.shopping?.cart?.items?.length || 0,
+            cart_value: this.currentProfile?.shopping?.cart?.total || 0,
+            marketing_opt_in: userData.marketing_emails,
+            conversion_method: 'signup_form'
+        });
+
+        // Reload profile to get updated data
+        await this.loadProfile();
+        
+        console.log('ProfileUI: Profile reloaded. New profile type:', this.currentProfile?.type);
+        console.log('ProfileUI: New profile ID:', this.currentProfile?.id);
+
+        // Show success message
+        this.showSuccessMessage('Account created successfully! Your cart and preferences have been saved.');
+        
+        // Close modals
+        this.closeAllModals();
+        
+        // Update cart display to reflect new profile
+        if (window.cartManager) {
+            await window.cartManager.syncWithProfile();
+            window.updateCartCount();
+            window.updateCartDisplay();
+        }
+        
+        // Update profile button display
+        this.updateProfileButton();
+        
+    } catch (error) {
+        console.error('ProfileUI: Signup failed:', error);
+        
+        // Show specific error messages
+        if (error.code === 'auth/email-already-in-use') {
+            this.showErrorMessage('This email is already registered. Please sign in instead.');
+        } else if (error.code === 'auth/weak-password') {
+            this.showErrorMessage('Password is too weak. Please choose a stronger password.');
+        } else if (error.code === 'auth/invalid-email') {
+            this.showErrorMessage('Please enter a valid email address.');
+        } else if (error.code === 'auth/network-request-failed') {
+            this.showErrorMessage('Network error. Please check your connection and try again.');
+        } else {
+            this.showErrorMessage(`Failed to create account: ${error.message}`);
+        }
+        
+        const submitBtn = event.target.querySelector('.signup-submit-btn');
+        submitBtn.textContent = 'Create Free Account';
+        submitBtn.disabled = false;
+    }
+}
+
+    // Replace the showSignInForm method in your ProfileUI class with this complete implementation:
+
+showSignInForm() {
+    // Close signup prompt first if it's open
+    this.closeSignupPrompt();
+    
+    const modal = this.createSignInModal();
+    this.modalContainer.appendChild(modal);
+    
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+
+    if (this.firebaseManager) {
+        this.firebaseManager.logEvent('signin_modal_opened', {
+            profile_type: this.currentProfile?.type || 'unknown'
+        });
+    }
+}
+
+createSignInModal() {
+    const modal = document.createElement('div');
+    modal.className = 'profile-modal';
+    modal.id = 'signInModal';
+    
+    modal.innerHTML = `
+        <div class="profile-modal-content" onclick="event.stopPropagation()">
+            <div class="profile-modal-header">
+                <h2>Sign In to Your Account</h2>
+                <button class="profile-modal-close" onclick="window.profileUI.closeSignInModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="profile-modal-body">
+                <div class="signin-benefits">
+                    <div class="signin-welcome">
+                        <h3>Welcome Back!</h3>
+                        <p>Sign in to access your saved cart, order history, and personalized recommendations.</p>
+                    </div>
+                </div>
+                
+                <form class="signin-form" onsubmit="window.profileUI.handleSignIn(event)">
+                    <div class="form-group">
+                        <label for="signinEmail">Email Address</label>
+                        <input type="email" id="signinEmail" name="email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signinPassword">Password</label>
+                        <input type="password" id="signinPassword" name="password" required autocomplete="current-password">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            Remember me
+                        </label>
+                    </div>
+                    <button type="submit" class="signin-submit-btn">Sign In</button>
+                </form>
+                
+                <div class="signin-options">
+                    <button type="button" class="forgot-password-btn" onclick="window.profileUI.showForgotPassword()">
+                        Forgot your password?
+                    </button>
+                </div>
+                
+                <div class="signin-footer">
+                    <p>Don't have an account? <button type="button" class="link-btn" onclick="window.profileUI.showSignupPrompt()">Create Account</button></p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Add click outside to close
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            this.closeSignInModal();
+        }
+    });
+
+    return modal;
+}
+
+// Updated handleSignIn method with proper UI refresh
+async handleSignIn(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const rememberMe = formData.get('rememberMe') === 'on';
+
+    const submitBtn = event.target.querySelector('.signin-submit-btn');
+    const originalText = submitBtn.textContent;
+
+    try {
+        submitBtn.textContent = 'Signing In...';
+        submitBtn.disabled = true;
+
+        console.log('ProfileUI: Starting sign in process...');
+
+        // Store current guest data before sign in
+        const currentGuestData = this.currentProfile?.type === 'guest' ? { ...this.currentProfile } : null;
+
+        // Sign in with Firebase Auth
+        const userCredential = await this.firebaseManager.auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        console.log('ProfileUI: Sign in successful for user:', user.uid);
+
+        // Set persistence based on "remember me"
+        if (rememberMe) {
+            await this.firebaseManager.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        } else {
+            await this.firebaseManager.auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+        }
+
+        // If user was a guest with data, merge it with their registered account
+        if (currentGuestData && currentGuestData.shopping.cart.items.length > 0) {
+            await this.mergeGuestDataIntoRegistered(currentGuestData, user);
+        }
+
+        // Log successful sign in
+        await this.firebaseManager.logEvent('user_signed_in', {
+            uid: user.uid,
+            email: user.email,
+            remember_me: rememberMe,
+            had_guest_data: !!currentGuestData
+        });
+
+        // CRITICAL: Wait for auth state change to complete and profile to reload
+        await this.waitForProfileUpdate(user.uid);
+        
+        console.log('ProfileUI: Profile updated. User profile type:', this.currentProfile?.type);
+
+        // Close the sign-in modal
+        this.closeSignInModal();
+        
+        // Show success message
+        this.showSuccessMessage('Signed in successfully! Welcome back.');
+        
+        // Update all UI components with new profile data
+        await this.refreshUIAfterSignIn();
+        
+    } catch (error) {
+        console.error('ProfileUI: Sign in failed:', error);
+        
+        // Show specific error messages
+        if (error.code === 'auth/user-not-found') {
+            this.showErrorMessage('No account found with this email address. Please check your email or create a new account.');
+        } else if (error.code === 'auth/wrong-password') {
+            this.showErrorMessage('Incorrect password. Please try again or reset your password.');
+        } else if (error.code === 'auth/invalid-email') {
+            this.showErrorMessage('Please enter a valid email address.');
+        } else if (error.code === 'auth/user-disabled') {
+            this.showErrorMessage('This account has been disabled. Please contact support.');
+        } else if (error.code === 'auth/too-many-requests') {
+            this.showErrorMessage('Too many failed attempts. Please try again later or reset your password.');
+        } else if (error.code === 'auth/network-request-failed') {
+            this.showErrorMessage('Network error. Please check your connection and try again.');
+        } else {
+            this.showErrorMessage(`Sign in failed: ${error.message}`);
+        }
+        
+        // Only reset button state on error
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+}
+// New method to wait for profile update after authentication
+async waitForProfileUpdate(expectedUserId, maxWaitTime = 5000) {
+    const startTime = Date.now();
+    
+    while (Date.now() - startTime < maxWaitTime) {
+        // Force reload the profile
+        await this.loadProfile();
+        
+        // Check if we now have a registered profile with the correct user ID
+        if (this.currentProfile && 
+            this.currentProfile.type === 'registered' && 
+            this.currentProfile.id === expectedUserId) {
+            console.log('Profile successfully updated to registered user');
+            return;
+        }
+        
+        // Wait a bit before checking again
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    console.warn('Profile update took longer than expected');
+}
+async refreshUIAfterSignIn() {
+    try {
+        // 1. Update profile button display
+        this.updateProfileButton();
+        
+        // 2. Sync cart with new profile
+        if (window.cartManager) {
+            await window.cartManager.syncWithProfile();
+            window.updateCartCount();
+            window.updateCartDisplay();
+        }
+        
+        // 3. If profile modal is open, refresh it with new data
+        const profileModal = document.getElementById('profileModal');
+        if (profileModal && profileModal.classList.contains('show')) {
+            // Close current modal and reopen with new data
+            this.closeProfileModal();
+            setTimeout(() => {
+                this.showProfileModal();
+            }, 300); // Wait for close animation
+        }
+        
+        // 4. Update any other UI components that depend on profile state
+        this.updateHeaderUserDisplay();
+        
+        console.log('UI refresh completed after sign-in');
+        
+    } catch (error) {
+        console.error('Error refreshing UI after sign-in:', error);
+    }
+}
+
+// New method to update header user display
+updateHeaderUserDisplay() {
+    const profileBtn = document.getElementById('profileBtn');
+    if (!profileBtn || !this.currentProfile) return;
+
+    const isSignedIn = this.currentProfile.type === 'registered';
+    
+    if (isSignedIn) {
+        // Add signed-in class for styling
+        profileBtn.classList.add('signed-in');
+        
+        // Remove guest indicator if it exists
+        const indicator = profileBtn.querySelector('.guest-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+        
+        // Update title and styling
+        const userName = this.currentProfile.personal_info?.name || 'User';
+        profileBtn.title = `Signed in as ${userName} - Click to view profile`;
+        
+        // Add user initial or icon if desired
+        const userIcon = profileBtn.querySelector('svg');
+        if (userIcon && userName) {
+            // You could replace the icon with user initial
+            // userIcon.innerHTML = `<text x="12" y="16" text-anchor="middle" fill="currentColor" font-size="10" font-weight="600">${userName.charAt(0).toUpperCase()}</text>`;
+        }
+        
+    } else {
+        // Remove signed-in styling
+        profileBtn.classList.remove('signed-in');
+        profileBtn.title = 'User Profile';
+    }
+}
+// Helper method to merge guest data into registered account
+async mergeGuestDataIntoRegistered(guestData, user) {
+    try {
+        console.log('Merging guest cart data into registered account...');
+        
+        // Load the user's registered profile
+        const registeredProfileDoc = await this.firebaseManager.db.collection('user_profiles').doc(user.uid).get();
+        
+        if (registeredProfileDoc.exists) {
+            const registeredProfile = registeredProfileDoc.data();
+            
+            // Merge cart items (avoid duplicates)
+            const existingCartItems = registeredProfile.shopping?.cart?.items || [];
+            const guestCartItems = guestData.shopping?.cart?.items || [];
+            
+            guestCartItems.forEach(guestItem => {
+                const existingItem = existingCartItems.find(item => item.product_id === guestItem.product_id);
+                if (existingItem) {
+                    // Add quantities together
+                    existingItem.quantity += guestItem.quantity;
+                    existingItem.updated_at = new Date().toISOString();
+                } else {
+                    // Add new item
+                    existingCartItems.push(guestItem);
+                }
+            });
+            
+            // Update the registered profile
+            await this.firebaseManager.db.collection('user_profiles').doc(user.uid).update({
+                'shopping.cart.items': existingCartItems,
+                'shopping.cart.updated_at': new Date().toISOString(),
+                'updated_at': new Date().toISOString()
+            });
+            
+            // Clean up guest profile from Firebase and localStorage
+            if (guestData.id.startsWith('guest_')) {
+                try {
+                    await this.firebaseManager.db.collection('user_profiles').doc(guestData.id).delete();
+                    
+                    // Clean up localStorage
+                    const sessionId = guestData.session_id;
+                    if (sessionId) {
+                        localStorage.removeItem(`guest_profile_${sessionId}`);
+                    }
+                } catch (cleanupError) {
+                    console.warn('Failed to clean up guest data:', cleanupError);
+                }
+            }
+            
+            console.log('Successfully merged guest data into registered account');
+        }
+    } catch (error) {
+        console.error('Failed to merge guest data:', error);
+        // Don't throw - sign in should still succeed even if merge fails
+    }
+}
+
+showForgotPassword() {
+    const email = document.getElementById('signinEmail')?.value || '';
+    
+    if (!email) {
+        this.showErrorMessage('Please enter your email address first, then click "Forgot your password?"');
+        return;
+    }
+    
+    this.sendPasswordReset(email);
+}
+
+async sendPasswordReset(email) {
+    try {
+        await this.firebaseManager.auth.sendPasswordResetEmail(email);
+        
+        this.showSuccessMessage(`Password reset email sent to ${email}. Please check your inbox and spam folder.`);
+        
+        // Log password reset event
+        await this.firebaseManager.logEvent('password_reset_requested', {
+            email: email
+        });
+        
+    } catch (error) {
+        console.error('Password reset failed:', error);
+        
+        if (error.code === 'auth/user-not-found') {
+            this.showErrorMessage('No account found with this email address.');
+        } else if (error.code === 'auth/invalid-email') {
+            this.showErrorMessage('Please enter a valid email address.');
+        } else {
+            this.showErrorMessage('Failed to send password reset email. Please try again.');
+        }
+    }
+}
+
+closeSignInModal() {
+    const modal = document.getElementById('signInModal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+}
+
+// Update the closeAllModals method to include sign in modal
+closeAllModals() {
+    this.closeProfileModal();
+    this.closeSignupPrompt();
+    this.closeEditProfile();
+    this.closeSignInModal(); // Add this line
+}
+
+    async exportGuestData() {
+        try {
+            const exportData = await this.firebaseManager.exportProfileData();
+            
+            if (exportData) {
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `profile-data-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showSuccessMessage('Profile data exported successfully!');
+            }
+        } catch (error) {
+            console.error('Export failed:', error);
+            this.showErrorMessage('Failed to export data.');
+        }
+    }
+
+    showEditProfile() {
+        // Create edit profile modal
+        const modal = this.createEditProfileModal();
+        this.modalContainer.appendChild(modal);
+        
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 10);
+    }
+
+    createEditProfileModal() {
+        const modal = document.createElement('div');
+        modal.className = 'profile-modal';
+        modal.id = 'editProfileModal';
+        
+        const personalInfo = this.currentProfile.personal_info || {};
+        const preferences = this.currentProfile.preferences || {};
+        
+        modal.innerHTML = `
+            <div class="profile-modal-content" onclick="event.stopPropagation()">
+                <div class="profile-modal-header">
+                    <h2>Edit Profile</h2>
+                    <button class="profile-modal-close" onclick="window.profileUI.closeEditProfile()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="profile-modal-body">
+                    <form class="edit-profile-form" onsubmit="window.profileUI.handleProfileUpdate(event)">
+                        <div class="form-section">
+                            <h4>Personal Information</h4>
+                            <div class="form-group">
+                                <label for="editName">Full Name</label>
+                                <input type="text" id="editName" name="name" value="${personalInfo.name || ''}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmail">Email Address</label>
+                                <input type="email" id="editEmail" name="email" value="${personalInfo.email || ''}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editPhone">Phone Number</label>
+                                <input type="tel" id="editPhone" name="phone" value="${personalInfo.phone || ''}">
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4>Preferences</h4>
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="notifications" ${preferences.notifications ? 'checked' : ''}>
+                                    Email notifications
+                                </label>
+                            </div>
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="marketing_emails" ${preferences.marketing_emails ? 'checked' : ''}>
+                                    Marketing emails and offers
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCurrency">Preferred Currency</label>
+                                <select id="editCurrency" name="currency">
+                                    <option value="USD" ${preferences.currency === 'USD' ? 'selected' : ''}>USD ($)</option>
+                                    <option value="EUR" ${preferences.currency === 'EUR' ? 'selected' : ''}>EUR (€)</option>
+                                    <option value="GBP" ${preferences.currency === 'GBP' ? 'selected' : ''}>GBP (£)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="profile-btn profile-btn-secondary" onclick="window.profileUI.closeEditProfile()">
+                                Cancel
+                            </button>
+                            <button type="submit" class="profile-btn profile-btn-primary">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeEditProfile();
+            }
+        });
+
+        return modal;
+    }
+
+    async handleProfileUpdate(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const updates = {
+            personal_info: {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone') || null
+            },
+            preferences: {
+                notifications: formData.get('notifications') === 'on',
+                marketing_emails: formData.get('marketing_emails') === 'on',
+                currency: formData.get('currency')
+            }
+        };
+
+        try {
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            await this.firebaseManager.updateProfile(updates);
+            await this.loadProfile();
+
+            this.showSuccessMessage('Profile updated successfully!');
+            this.closeEditProfile();
+            
+        } catch (error) {
+            console.error('Profile update failed:', error);
+            this.showErrorMessage('Failed to update profile. Please try again.');
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'Save Changes';
+            submitBtn.disabled = false;
+        }
+    }
+
+    showOrderHistory() {
+        const orders = this.currentProfile.shopping?.purchase_history || [];
+        
+        if (orders.length === 0) {
+            alert('No order history found. Start shopping to see your orders here!');
+            return;
+        }
+
+        // For demo purposes, show a simple alert with order count
+        // In production, create a full order history modal
+        alert(`Order History:\n\nTotal Orders: ${orders.length}\nTotal Spent: ${orders.reduce((sum, order) => sum + (order.totals?.total || 0), 0).toFixed(2)}\n\nFull order history interface would be implemented here.`);
+    }
+
+    async signOut() {
+        try {
+            if (this.firebaseManager.signOutUser) {
+                await this.firebaseManager.signOutUser();
+            }
+            
+            // Clear profile and reload
+            this.currentProfile = await this.firebaseManager.getCurrentProfile();
+            this.updateProfileButton();
+            this.closeAllModals();
+            
+            this.showSuccessMessage('Signed out successfully.');
+            
+        } catch (error) {
+            console.error('Sign out failed:', error);
+            this.showErrorMessage('Failed to sign out.');
+        }
+    }
+
+    // Utility methods
+    calculateStats() {
+        if (!this.currentProfile) return { totalOrders: 0, totalSpent: 0, cartItems: 0, wishlistItems: 0, cartTotal: 0 };
+
+        const shopping = this.currentProfile.shopping || {};
+        const totalOrders = shopping.purchase_history?.length || 0;
+        const totalSpent = shopping.purchase_history?.reduce((sum, order) => sum + (order.totals?.total || 0), 0) || 0;
+        const cartItems = shopping.cart?.items?.length || 0;
+        const wishlistItems = shopping.wishlist?.length || 0;
+        const cartTotal = shopping.cart?.total || 0;
+
+        return { totalOrders, totalSpent, cartItems, wishlistItems, cartTotal };
+    }
+
+    getLastOrderDate() {
+        const orders = this.currentProfile.shopping?.purchase_history || [];
+        if (orders.length === 0) return 'No orders yet';
+        
+        const lastOrder = orders[orders.length - 1];
+        return new Date(lastOrder.purchased_at).toLocaleDateString();
+    }
+
+    getFavoriteCategory() {
+        const productViews = this.currentProfile.browsing?.product_views || [];
+        if (productViews.length === 0) return 'None yet';
+        
+        const categories = {};
+        productViews.forEach(view => {
+            const category = view.product_data?.category;
+            if (category) {
+                categories[category] = (categories[category] || 0) + 1;
+            }
+        });
+        
+        const sortedCategories = Object.entries(categories).sort(([,a], [,b]) => b - a);
+        return sortedCategories.length > 0 ? this.formatCategoryName(sortedCategories[0][0]) : 'None yet';
+    }
+
+    formatCategoryName(category) {
+        const names = {
+            'boys': 'Boys Clothing',
+            'girls': 'Girls Clothing',
+            'women': 'Women\'s Jewelry',
+            'accessories': 'Accessories'
+        };
+        return names[category] || category;
+    }
+
+    getActivityIcon(action) {
+        const icons = {
+            'item_added_to_cart': '🛒',
+            'item_removed_from_cart': '🗑️',
+            'cart_quantity_updated': '📝',
+            'page_view': '👀',
+            'product_view': '🔍',
+            'filter_used': '🔧',
+            'checkout_initiated': '💳',
+            'default': '📋'
+        };
+        return icons[action] || icons.default;
+    }
+
+    formatActivityAction(action) {
+        const labels = {
+            'item_added_to_cart': 'Added item to cart',
+            'item_removed_from_cart': 'Removed item from cart',
+            'cart_quantity_updated': 'Updated cart quantity',
+            'page_view': 'Viewed page',
+            'product_view': 'Viewed product',
+            'filter_used': 'Used filter',
+            'checkout_initiated': 'Started checkout'
+        };
+        return labels[action] || action.replace(/_/g, ' ');
+    }
+
+    formatTime(timestamp) {
+        const now = new Date();
+        const time = new Date(timestamp);
+        const diff = now - time;
+        
+        if (diff < 60000) return 'Just now';
+        if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+        if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+        return `${Math.floor(diff / 86400000)}d ago`;
+    }
+
+    showSuccessMessage(message) {
+        this.showMessage(message, 'success');
+    }
+
+    showErrorMessage(message) {
+        this.showMessage(message, 'error');
+    }
+
+    showMessage(message, type = 'success') {
+        // Use existing notification system
+        if (window.showNotification) {
+            window.showNotification(message, type);
+        } else {
+            alert(message);
+        }
+    }
+
+    // Modal management
+    closeProfileModal() {
+        const modal = document.getElementById('profileModal');
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.remove();
+            }, 300);
+        }
+    }
+
+    closeSignupPrompt() {
+        const modal = document.getElementById('signupPromptModal');
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.remove();
+            }, 300);
+        }
+    }
+
+    closeEditProfile() {
+        const modal = document.getElementById('editProfileModal');
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.remove();
+            }, 300);
+        }
+    }
+
+    closeAllModals() {
+        this.closeProfileModal();
+        this.closeSignupPrompt();
+        this.closeEditProfile();
+    }
+}
+    </script>
+    <script src="firebase-manager.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
